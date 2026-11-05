@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивная демонстрация учёта заявок, оплат и отчётности буровой компании на синтетических данных.">
+  <title>Бурение скважин · заявки и финансы</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="data.js"></script>
+  <script defer src="model.js"></script>
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="masthead"><div class="wrap">
+    <a href="../index.html">← Демо проектов</a>
+    <p class="kicker">Павел Кузнецов · демо на синтетических данных</p>
+    <h1>Бурение скважин</h1>
+    <p>Заявки менеджеров, расчёты с клиентами и управленческая отчётность</p>
+  </div></header>
+  <main class="wrap">
+    <nav class="nav" aria-label="Разделы">
+      <button type="button" data-view="orders" aria-pressed="true">Реестр заявок</button>
+      <button type="button" data-view="quote" aria-pressed="false">Новая заявка</button>
+      <button type="button" data-view="finance" aria-pressed="false">ДДС и ОПиУ</button>
+      <button type="button" data-view="managers" aria-pressed="false">Менеджеры</button>
+      <button type="button" class="reset" id="reset">Сбросить демо</button>
+    </nav>
+    <p class="guide">Начните с заявки № 106. Внесите частичную оплату и проверьте дебиторку и ДДС. Изменения действуют в этой вкладке до перезагрузки.</p>
+    <p id="notice" class="notice" role="status" hidden></p>
+
+    <section id="orders" aria-label="Реестр заявок">
+      <div id="order-metrics" class="metrics"></div>
+      <div class="split">
+        <div class="panel">
+          <h2>Заявки учредителей</h2>
+          <div class="form-grid order-filters">
+            <label>Направление<select id="kind-filter"><option value="">Все</option><option value="drill">Бурение</option><option value="install">Монтаж</option></select></label>
+            <label>Менеджер<select id="manager-filter"><option value="">Все</option></select></label>
+            <label>Статус<select id="status-filter"><option value="">Все</option><option>в работе</option><option>готово</option><option>отмена</option></select></label>
+            <label>Месяц<select id="order-month"><option value="">Весь год</option></select></label>
+          </div>
+          <div class="scroll"><table id="order-table"></table></div>
+        </div>
+        <div class="panel details-panel" id="detail" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section id="quote" hidden aria-labelledby="quote-title">
+      <div class="panel">
+        <h2 id="quote-title">Заявка менеджера</h2>
+        <p class="muted">Сначала рассчитайте стоимость по справочнику, затем добавьте заявку в общий реестр.</p>
+        <form id="quote-form">
+          <div class="form-grid">
+            <label>Менеджер<select name="manager" id="quote-manager"></select></label>
+            <label>Направление<select name="kind" id="quote-kind"><option value="drill">Бурение</option><option value="install">Монтаж</option></select></label>
+            <label>Дата заявки<input name="date" type="date" required value="2026-03-27" min="2026-01-01" max="2026-12-31"></label>
+          </div>
+          <div id="drill-fields" class="form-grid fields">
+            <label>Тип скважины<select name="soil" id="soil"><option>Песок</option><option>Известняк</option></select></label>
+            <label>Конструкция<select name="construction" id="construction"></select></label>
+            <label>Метраж, м<input name="metres" type="number" min="1" max="1000" required value="38"></label>
+            <label>Фильтр<select name="filter" id="quote-filter"></select></label>
+            <label>Цена за метр, ₽<input name="rate" type="number" min="1" max="1000000" placeholder="По фиксированному тарифу"></label>
+            <label>Корректировка, ₽<input name="adjustment" type="number" min="-1000000" max="1000000" value="0"></label>
+          </div>
+          <div id="install-fields" class="form-grid fields" hidden>
+            <label>Тип обустройства<select name="installation" id="installation"></select></label>
+            <label>Стоимость работ, ₽<input name="installation-price" type="number" min="1" max="10000000" required></label>
+          </div>
+          <div class="form-grid fields"><label>Комиссия, ₽<input name="commission" type="number" min="0" max="1000000" required value="6300"></label></div>
+          <div id="quote-preview" class="quote-preview" aria-live="polite"></div>
+          <button class="primary" type="submit">Добавить заявку в реестр</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="finance" hidden aria-labelledby="finance-title">
+      <div id="finance-metrics" class="metrics"></div>
+      <div class="panel">
+        <h2 id="finance-title">ОПиУ · 2026</h2>
+        <p class="muted">Доходы и расходы по дате платежа. Инвестиции входят в остатки счетов.</p>
+        <div id="finance-chart"></div>
+        <details><summary>Помесячная детализация</summary><div class="scroll"><table id="pnl-table"></table></div></details>
+      </div>
+      <div class="panel">
+        <h2>Остатки на счетах</h2>
+        <div id="balances" class="metrics compact"></div>
+      </div>
+      <div class="panel">
+        <h2>Журнал ДДС</h2>
+        <div class="form-grid operation-filters">
+          <label>Счёт<select id="account-filter"><option value="">Все счета</option></select></label>
+          <label>Месяц<select id="cash-month"><option value="">Весь год</option></select></label>
+          <label>№ заявки<input type="number" min="1" id="cash-order" placeholder="Например, 106"></label>
+        </div>
+        <div class="scroll"><table id="cash-table"></table></div>
+      </div>
+    </section>
+
+    <section id="managers" hidden aria-labelledby="managers-title">
+      <div class="panel">
+        <h2 id="managers-title">Эффективность менеджеров</h2>
+        <p class="muted">Заявки за месяц их создания. Выручка — стоимость заявок со статусом «готово».</p>
+        <label class="month-control">Месяц<select id="manager-month"></select></label>
+        <div class="scroll"><table id="manager-table"></table></div>
+      </div>
+    </section>
+  </main>
+  <noscript>Для работы демо включите JavaScript в браузере.</noscript>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Маркетинговые проекты · план и экономика</title>
+  <link rel="stylesheet" href="../case.css">
+  <script defer src="../demo-ui.js"></script><script defer src="data.js"></script><script defer src="model.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+<header><div class="wrap">
+  <a href="../index.html">← Демо проектов</a><p class="kicker">Павел Кузнецов · синтетические данные</p>
+  <h1>Маркетинговые проекты</h1><p>Состав команды, план по встречам и экономика каждого проекта</p>
+</div></header>
+<main class="wrap">
+  <section class="panel controls" aria-label="Фильтры">
+    <label>Неделя с<select id="week"></select></label>
+    <label>Проект<select id="project"></select></label>
+    <label>Менеджер<select id="manager"></select></label>
+  </section>
+  <section id="metrics" class="metrics" aria-label="Показатели" aria-live="polite"></section>
+  <div class="split">
+    <section class="panel">
+      <h2>Встречи по проектам</h2>
+      <p class="muted">Факт и план за выбранный период. «Орбита» выполняет план в последнюю неделю. Сравните её расходы и результат с другими проектами.</p>
+      <div id="meetings"></div>
+    </section>
+    <section class="panel">
+      <h2>Подключить менеджера</h2>
+      <p class="muted">Добавьте демо-менеджера в выбранный проект или создайте проект. Назначение, недельный план и факт появятся в отчётах.</p>
+      <form id="onboard">
+        <div class="controls"><label>Назначить на<select id="assign"></select></label>
+          <label>План встреч<input type="number" id="target" min="1" max="20" value="5" required></label>
+          <label>Состоялось встреч<input type="number" id="held" min="0" max="20" value="4" required></label></div>
+        <p class="muted">Пример добавляет запись за последнюю неделю. Изменения действуют до перезагрузки.</p>
+        <button class="primary" type="submit">Добавить менеджера</button> <button type="button" id="reset">Сбросить</button>
+        <p id="notice" class="note" role="status" hidden></p>
+      </form>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Экономика проектов</h2>
+    <p class="muted">Стоимость встречи = затраты ÷ состоявшиеся встречи. Затраты включают базы, выплаты за полные сотни контактов и встречи, дополнительные расходы.</p>
+    <div id="economy-chart" class="economy-chart"></div>
+    <div class="scroll"><table id="economy"></table></div>
+  </section>
+  <section class="panel">
+    <h2>Вклад менеджеров</h2>
+    <p class="muted">В таблице только существующие назначения. Конверсия считается из обработанного контакта в состоявшуюся встречу.</p>
+    <div class="scroll"><table id="team"></table></div>
+  </section>
+</main>
+</body>
+</html>

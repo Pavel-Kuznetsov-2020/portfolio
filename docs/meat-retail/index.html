@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Розничная сеть · остатки и деньги</title>
+  <link rel="stylesheet" href="../case.css">
+  <script defer src="../demo-ui.js"></script><script defer src="data.js"></script><script defer src="model.js"></script><script defer src="app.js"></script>
+</head>
+<body class="retail">
+<header><div class="wrap">
+  <a href="../index.html">← Демо проектов</a><p class="kicker">Павел Кузнецов · синтетические данные</p>
+  <h1>Розничная сеть</h1><p>Запасы по торговым точкам, списания и движение денег</p>
+</div></header>
+<main class="wrap">
+  <section class="panel controls" aria-label="Фильтры">
+    <label>Неделя до<select id="week"></select></label>
+    <label>Точка<select id="store"></select></label>
+    <label>Товар<select id="product"></select></label>
+  </section>
+  <section id="metrics" class="metrics" aria-label="Показатели запасов" aria-live="polite"></section>
+  <div class="split">
+    <section class="panel">
+      <h2>Запас относительно продаж</h2>
+      <p class="muted">Остаток на дату и продажи за семь дней, кг. Сравните точки, чтобы решить, куда распределять товар.</p>
+      <div id="stock-chart"></div>
+    </section>
+    <section class="panel">
+      <h2>Перемещение между точками</h2>
+      <p class="muted">В последнюю неделю в «Севере» накопилась мякоть. Проверьте перенос 8 кг в «Центр».</p>
+      <form id="transfer">
+        <div class="controls">
+          <label>Откуда<select id="from"></select></label><label>Куда<select id="to"></select></label>
+          <label>Товар<select id="move-product"></select></label><label>Вес, кг<input id="weight" type="number" min="1" step="1" value="8" required></label>
+        </div>
+        <p class="muted" id="available"></p>
+        <button class="primary" type="submit">Переместить</button> <button type="button" id="reset">Сбросить</button>
+        <p id="notice" class="note" role="status" hidden></p>
+      </form>
+    </section>
+  </div>
+  <section class="panel">
+    <h2>Движение и оценка запаса</h2>
+    <p class="muted">Остатки показаны на конец выбранной недели. Поступления, продажи, перемещения и списания — за эту неделю. Стоимость запаса в демо рассчитана по средней закупочной стоимости килограмма пригодной продукции партии.</p>
+    <div class="scroll"><table id="stock"></table></div>
+  </section>
+  <section class="panel">
+    <h2>Движение денег за неделю</h2>
+    <p class="muted">Платежи по точке или сети за выбранную неделю. Для всей сети учитываются закупка и расходы цеха.</p>
+    <div id="cash" class="metrics"></div>
+    <details><summary>Расшифровка ДДС</summary><div class="scroll"><table id="cash-table"></table></div></details>
+  </section>
+</main>
+</body></html>

@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кубики · Wildberries</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="model.js"></script>
+  <script defer src="dashboard.js"></script>
+  <script defer src="new-product.js"></script>
+</head>
+<body>
+  <header><div class="wrap">
+    <a class="portfolio-link" href="../index.html">← Демо проектов</a>
+    <p>Павел Кузнецов · синтетические данные</p>
+    <h1>Кубики · аналитика продавца Wildberries</h1>
+    <p>Ассортимент · реклама · складские остатки</p>
+  </div></header>
+  <main class="wrap">
+    <section class="controls panel" aria-label="Фильтры">
+      <label>Артикул<select id="sku"><option value="">Все артикулы</option></select></label>
+      <label>Период<select id="week">
+        <option value="">02–15 февраля</option><option value="0">02–08 февраля</option><option value="1" selected>09–15 февраля</option>
+      </select></label>
+      <label>База процентов<select id="basis"><option value="buyouts">Потенциальные продажи</option><option value="orders">Сумма заказов</option></select></label>
+    </section>
+    <section id="metrics" class="metrics" aria-label="Показатели выбранного сценария" aria-live="polite"></section>
+    <section class="panel" aria-labelledby="review-title">
+      <h2 id="review-title">Товары к проверке</h2>
+      <p class="subtle">Диагностика по базовым данным за выбранный период.</p>
+      <div class="scroll"><table id="review"></table></div>
+    </section>
+    <section class="panel" id="sku-detail" aria-labelledby="detail-title" hidden>
+      <h2 id="detail-title"></h2>
+      <dl id="detail-facts"></dl>
+      <div class="scroll"><table id="weeks"></table></div>
+      <nav class="detail-links" id="detail-links" aria-label="Разделы диагностики"></nav>
+    </section>
+    <section class="panel" id="scenario">
+      <h2>Сценарий цены и рекламных расходов</h2>
+      <div class="controls scenario-controls" aria-label="Параметры сценария">
+        <label>Изменение цены, %<input id="change" type="number" min="-90" max="100" value="0"></label>
+        <label>Изменение расходов на рекламу, %<input id="ad-change" type="number" min="-100" max="100" value="0"></label>
+        <button type="button" id="reset">Сбросить</button>
+      </div>
+      <p class="subtle">Объём заказов, выкуп и атрибуция фиксированы. Сценарий пересчитывает экономику при заданных условиях.</p>
+      <div class="scroll"><table id="scenario-result"></table></div>
+    </section>
+    <section class="panel">
+      <h2>Экономика ассортимента</h2>
+      <figure>
+        <figcaption><strong>Маржа до и после рекламы</strong><span>До рекламы — с учётом хранения. Нулевая линия отделяет прибыль от убытка.</span></figcaption>
+        <div id="margin" class="comparison"></div>
+      </figure>
+      <div class="scroll"><table id="assortment"></table></div>
+    </section>
+    <section class="panel" id="ad-section">
+      <h2>Воронка и реклама</h2>
+      <figure>
+        <figcaption><strong>ДРР и расчётный порог</strong><span>Порог рассчитан при текущих налоговых начислениях. При отрицательной марже до рекламы порог недоступен.</span></figcaption>
+        <div id="ad-limit" class="comparison"></div>
+      </figure>
+      <div class="scroll"><table id="funnel"></table></div>
+      <div class="scroll"><table id="ads"></table></div>
+      <div id="campaigns" hidden>
+        <h3>Кампании выбранного артикула</h3>
+        <div class="scroll"><table id="campaign-table"></table></div>
+      </div>
+    </section>
+    <section class="panel" id="stock-section">
+      <h2>Остатки и скорость заказов</h2>
+      <figure>
+        <figcaption><strong>Доступный остаток на конец дня, шт.</strong></figcaption>
+        <div id="stock-trend" class="chart"></div>
+      </figure>
+      <figure>
+        <figcaption><strong>Заказы по дням, шт.</strong><span>Те же даты и цвета артикулов, что на графике остатков.</span></figcaption>
+        <div id="order-trend" class="chart"></div>
+      </figure>
+      <div class="scroll"><table id="stock"></table></div>
+    </section>
+    <details class="panel"><summary>Детализация по артикулу и дню</summary>
+      <div class="scroll"><table id="daily"></table></div>
+    </details>
+    <section class="panel" aria-labelledby="product-title">
+      <h2 id="product-title">Оценка новинки</h2>
+      <p class="subtle">Калькулятор оценивает расходы и маржу на один выкуп по введённым условиям.</p>
+      <form id="new-product" class="controls scenario-controls">
+        <label>Цена до СПП, ₽<input name="price" type="number" min="1" max="10000000" step="any" required value="1490"></label>
+        <label>Себестоимость, ₽<input name="cost" type="number" min="0" max="10000000" step="any" required value="530"></label>
+        <label>Комиссия и эквайринг, %<input name="fee" type="number" min="0" max="100" step="any" required value="18.5"></label>
+        <label>Выкуп, %<input name="buyout" type="number" min="0.01" max="100" step="any" required value="70"></label>
+        <label>Прямая логистика, ₽<input name="direct" type="number" min="0" max="10000000" step="any" required value="63"></label>
+        <label>Обратная логистика, ₽<input name="reverse" type="number" min="0" max="10000000" step="any" required value="48"></label>
+        <label>Налог и НДС на выкуп, ₽<input name="tax" type="number" min="0" max="10000000" step="any" required value="102"></label>
+        <label>Хранение на выкуп, ₽<input name="storage" type="number" min="0" max="10000000" step="any" required value="14"></label>
+        <label>ДРР, %<input name="ad" type="number" min="0" max="100" step="any" required value="9"></label>
+      </form>
+      <p id="product-result" class="product-result" aria-live="polite"></p>
+    </section>
+  </main>
+</body>
+</html>
